@@ -1,0 +1,77 @@
+def print_board(board):
+    """Отображает текущее состояние игрового поля."""
+    print("\n")
+    for i, row in enumerate(board):
+        print(" " * 3 + " | ".join(row))
+        if i < 2:
+            print(" " * 3 + "-" * 11)
+
+
+def check_winner(board, player):
+    """Проверяет победу игрока."""
+    # Проверка строк и столбцов
+    for i in range(3):
+        if all([cell == player for cell in board[i]]):  # Горизонтали
+            return True
+        if all([board[j][i] == player for j in range(3)]):  # Вертикали
+            return True
+
+    # Диагонали
+    if all([board[i][i] == player for i in range(3)]) or \
+            all([board[i][2 - i] == player for i in range(3)]):
+        return True
+
+    return False
+
+
+def is_board_full(board):
+    """Проверяет заполненность доски."""
+    return all(cell != " " for row in board for cell in row)
+
+
+def get_player_move(board, player):
+    """Получает и проверяет корректность хода."""
+    while True:
+        try:
+            row = int(input(f"Игрок {player}, введите номер строки (1-3): ")) - 1
+            col = int(input(f"Игрок {player}, введите номер столбца (1-3): ")) - 1
+
+            if 0 <= row < 3 and 0 <= col < 3:
+                if board[row][col] == " ":
+                    return row, col
+                print("Эта клетка уже занята!")
+            else:
+                print("Координаты должны быть от 1 до 3!")
+
+        except ValueError:
+            print("Пожалуйста, вводите только числа!")
+
+
+def play_game():
+    """Управляет игровым процессом."""
+    board = [[" " for _ in range(3)] for _ in range(3)]
+    current_player = "X"
+
+    print(" Добро пожаловать в игру Крестики-нолики! ")
+    print("----------------------------------------")
+
+    while True:
+        print_board(board)
+        row, col = get_player_move(board, current_player)
+        board[row][col] = current_player
+
+        if check_winner(board, current_player):
+            print_board(board)
+            print(f"Игрок {current_player} победил! Поздравляем!")
+            break
+
+        if is_board_full(board):
+            print_board(board)
+            print("Ничья! Игра завершена.")
+            break
+
+        current_player = "O" if current_player == "X" else "X"
+
+
+if __name__ == "__main__":
+    play_game()
